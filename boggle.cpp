@@ -1,29 +1,75 @@
 #include "header.h"
 
-int data_length;
 const int one_d = 3, two_d = 3;
 
-vector <string> dict, generated_words;
+vector <string> generated_words;
 
-bool is_word (string str) {
+class Trie {
 
-    FOR (i, dict.size ()) {
+    map <char, Trie *> book;
 
-        if (str == dict[i]) return true;
+    bool isEnd;
+
+public:
+
+    Trie () { isEnd = true; }
+
+    Trie * get_index (char ch) { return book[ch]; }
+
+    bool is_last () { return isEnd; }
+
+    void set_index (char ch) {
+        
+        book[ch] = new Trie;
+
+        isEnd = false;
     }
+};
 
-    return false;
+Trie * generate_dict () {
+
+    return new Trie;
 }
 
-void generate_words_util (char data[][two_d], bool visited[][two_d], int i, int j, string &str) {
+void update_dict (Trie * head, string key) {
+
+    Trie * trav = head;
+
+    FOR (i, key.length ()) {
+
+        if (!trav -> get_index (key[i])) {
+
+            trav -> set_index (key[i]);
+        }
+
+        trav = trav -> get_index (key[i]);
+    }
+}
+
+bool is_word (Trie * head, string key) {
+
+    Trie * trav = head;
+
+    FOR (i, key.length ()) {
+
+        if (!trav -> get_index (key[i])) return false;
+
+        trav = trav -> get_index (key[i]);
+    }
+
+    // should meet condition for word completeness => reach till leaf
+    return true && trav -> is_last ();
+}
+
+void generate_words_util (Trie * dict, char data[][two_d], bool visited[][two_d], int i, int j, string &str) {
 
     visited[i][j] = true;
 
-    db ("Adding", data[i][j], false);
+    // db ("Adding", data[i][j], false);
 
     str += data[i][j];
 
-    if (is_word (str)) generated_words.push_back (str);
+    if (is_word (dict, str)) generated_words.push_back (str);
 
     for (int row = i - 1; row <= i + 1 && row < one_d; row ++) {
 
@@ -31,19 +77,19 @@ void generate_words_util (char data[][two_d], bool visited[][two_d], int i, int 
 
             if (row >= 0 && col >= 0 && !visited[row][col]) {
 
-                generate_words_util (data, visited, row, col, str);
+                generate_words_util (dict, data, visited, row, col, str);
             }
         }
     }
 
     str.erase (str.length () - 1);
 
-    db ("Cleared", "", true);
+    // db ("Cleared", "", true);
 
     visited[i][j] = false;
 }
 
-void generate_words (char data[one_d][two_d]) {
+void generate_words (Trie * dict, char data[one_d][two_d]) {
 
     bool visited[one_d][two_d] = {{ false }};
 
@@ -53,11 +99,9 @@ void generate_words (char data[one_d][two_d]) {
 
         FOR (j, two_d) {
 
-            db ("Starting with", data[i][j], true);
+            // db ("Starting with", data[i][j], true);
 
-            generate_words_util (data, visited, i, j, str);
-
-            return;
+            generate_words_util (dict, data, visited, i, j, str);
         }
     }
 }
@@ -72,9 +116,9 @@ void print_words () {
 
 int main () {
 
-    extern int data_length;
-
     freopen ("boggle.txt", "r", stdin);
+
+    Trie * dict = generate_dict ();
 
     int _;
     cin >> _;
@@ -84,7 +128,7 @@ int main () {
         string str;
         cin >> str;
 
-        dict.push_back (str);
+        update_dict (dict, str);
     }
 
     // cin >> one_d >> two_d;
@@ -93,7 +137,7 @@ int main () {
 
     FOR (i, one_d) FOR (j, two_d) cin >> data[i][j];
 
-    generate_words (data);
+    generate_words (dict, data);
 
     print_words ();
 
