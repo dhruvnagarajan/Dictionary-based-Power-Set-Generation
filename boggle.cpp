@@ -61,6 +61,26 @@ bool is_word (Trie * head, string key) {
     return true && trav -> is_last ();
 }
 
+void update_generated_words (string str) {
+
+    bool success = true;
+
+    FOR (i, generated_words.size ()) {
+
+        if (generated_words[i] == str) {
+
+            success = false;
+
+            break;
+        }
+    }
+
+    if (success) {
+
+        generated_words.push_back (str);
+    }
+}
+
 void generate_words_util (Trie * dict, char data[][two_d], bool visited[][two_d], int i, int j, string &str) {
 
     visited[i][j] = true;
@@ -69,7 +89,7 @@ void generate_words_util (Trie * dict, char data[][two_d], bool visited[][two_d]
 
     str += data[i][j];
 
-    if (is_word (dict, str)) generated_words.push_back (str);
+    if (is_word (dict, str)) update_generated_words (str);
 
     for (int row = i - 1; row <= i + 1 && row < one_d; row ++) {
 
@@ -107,6 +127,8 @@ void generate_words (Trie * dict, char data[one_d][two_d]) {
 }
 
 void print_words () {
+
+    sort (generated_words.begin (), generated_words.begin () + generated_words.size ());
 
     FOR (i, generated_words.size ()) {
 
