@@ -90,7 +90,6 @@ void generate_words_util (Trie * dict, char data[][two_d], bool visited[][two_d]
     str += data[i][j];
 
     if (is_word (dict, str)) update_generated_words (str);
-    // if (is_word (dict, str)) generated_words.push_back (str);
 
     for (int row = i - 1; row <= i + 1 && row < one_d; row ++) {
 
@@ -153,8 +152,6 @@ int main () {
 
         update_dict (dict, str);
     }
-
-    // cin >> one_d >> two_d;
 
     char data[one_d][two_d];
 
