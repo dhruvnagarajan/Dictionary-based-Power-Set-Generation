@@ -1,4 +1,7 @@
-#include "header.h"
+#include <bits/stdc++.h>
+using namespace std;
+
+#define FOR(i, n) for (int i = 0; i < n; i ++)
 
 const int one_d = 3, two_d = 3;
 
@@ -138,7 +141,7 @@ void print_words () {
 
 int main () {
 
-    freopen ("boggle.txt", "r", stdin);
+    freopen ("boggle_input.txt", "r", stdin);
 
     Trie * dict = generate_dict ();
 
